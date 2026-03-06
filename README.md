@@ -8,7 +8,8 @@ This project was built to demonstrate advanced backend concepts, including a dua
 
 ## ✨ Features
 
-* **Dual-Database Architecture:** * **MySQL (Sequelize):** Handles highly relational data (Users, Playlists, and a bridge table linking playlists to songs).
+* **Dual-Database Architecture:**
+  * **MySQL (Sequelize):** Handles highly relational data (Users, Playlists, and a bridge table linking playlists to songs).
   * **MongoDB (Mongoose):** Manages flexible, document-based data (Song catalog with dynamic attributes).
 * **Cross-Database Synchronization:** Custom logic ensures data integrity (e.g., when a song is deleted from MongoDB, all references are automatically purged from MySQL user playlists).
 * **Hybrid APIs:**
@@ -40,20 +41,20 @@ Before you begin, ensure you have the following installed and set up:
 ## 🚀 Installation & Setup
 
 **1. Clone the repository**
-\`\`\`bash
+````bash
 git clone https://github.com/sebastianarrue/spotify-nodejs.git
 cd your-repo-name
-\`\`\`
+````
 
 **2. Install dependencies**
-\`\`\`bash
+````bash
 npm install
-\`\`\`
+````
 
 **3. Set up Environment Variables**
 Create a `.env` file in the root directory and add the following variables. Replace the placeholder values with your actual credentials:
 
-\`\`\`env
+````env
 PORT=8080
 SQL_HOST=localhost
 SQL_USER=root
@@ -62,22 +63,22 @@ SQL_DATABASE=spotify_clone_db
 MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/spotify_clone?retryWrites=true&w=majority
 SESSION_SECRET=your_super_secret_string
 SENDGRID_API_KEY=SG.your_sendgrid_api_key
-\`\`\`
+````
 
 **4. Create local directories**
 Ensure you have the directory structure for local file uploads:
-\`\`\`bash
+````bash
 mkdir -p public/images
-\`\`\`
+````
 
 **5. Start the server**
-\`\`\`bash
+````bash
 # For development with auto-restart
 npm run dev
 
 # For production
 npm start
-\`\`\`
+````
 *Note: Sequelize will automatically create the MySQL tables on the first run!*
 
 ## 🛣️ API Endpoints Overview
