@@ -41,7 +41,7 @@ Before you begin, ensure you have the following installed and set up:
 
 **1. Clone the repository**
 \`\`\`bash
-git clone https://github.com/yourusername/your-repo-name.git
+git clone https://github.com/sebastianarrue/spotify-nodejs.git
 cd your-repo-name
 \`\`\`
 
