@@ -62,3 +62,69 @@ exports.addSongToPlaylist = async (req, res) => {
         res.status(500).json({ message: 'Failed to add song.' });
     }
 };
+
+// Edit Playlist Information
+exports.editPlaylist = async (req, res) => {
+    const { name, description } = req.body;
+    const playlistId = req.params.id; // Get ID from the URL
+
+    try {
+        // Find playlist and ensure it belongs to the logged-in user
+        const playlist = await Playlist.findOne({ 
+            where: { id: playlistId, userId: req.session.user.id } 
+        });
+
+        if (!playlist) return res.status(404).json({ message: 'Playlist not found or unauthorized.' });
+
+        playlist.name = name || playlist.name;
+        playlist.description = description || playlist.description;
+        await playlist.save();
+
+        res.status(200).json({ message: 'Playlist updated!', playlist });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to update playlist.' });
+    }
+};
+
+// Remove a song from a playlist
+exports.removeSongFromPlaylist = async (req, res) => {
+    const { playlistId, mongoSongId } = req.body;
+
+    try {
+        // First, verify the playlist belongs to the user
+        const playlist = await Playlist.findOne({ 
+            where: { id: playlistId, userId: req.session.user.id } 
+        });
+
+        if (!playlist) return res.status(404).json({ message: 'Playlist not found or unauthorized.' });
+
+        // Delete the bridge record
+        await PlaylistSong.destroy({
+            where: { playlistId: playlist.id, mongoSongId: mongoSongId }
+        });
+
+        res.status(200).json({ message: 'Song removed from playlist.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to remove song.' });
+    }
+};
+
+// Delete a Playlist entirely
+exports.deletePlaylist = async (req, res) => {
+    const playlistId = req.params.id;
+
+    try {
+        const deletedCount = await Playlist.destroy({
+            where: { id: playlistId, userId: req.session.user.id }
+        });
+
+        if (deletedCount === 0) return res.status(404).json({ message: 'Playlist not found or unauthorized.' });
+
+        res.status(200).json({ message: 'Playlist deleted successfully.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to delete playlist.' });
+    }
+};

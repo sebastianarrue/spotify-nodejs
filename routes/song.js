@@ -20,4 +20,16 @@ router.post(
     songController.createSong
 );
 
+// PUT /songs/edit/:id
+router.put(
+    '/edit/:id', 
+    isAuth, 
+    isAdmin, 
+    upload.single('image'), 
+    songController.editSong
+);
+
+// DELETE /songs/delete/:id
+router.delete('/delete/:id', isAuth, isAdmin, songController.deleteSong);
+
 module.exports = router;
