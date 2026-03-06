@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-exports.signup = async (req, res) => {
+exports.signup = async (req, res, next) => {
     const { email, password } = req.body;
 
     try {
@@ -28,7 +28,7 @@ exports.signup = async (req, res) => {
         const newUser = await User.create({
             email: email,
             password: hashedPassword,
-            isAdmin: false 
+            isAdmin: false
         });
 
         // 4. Send Welcome Email asynchronously
@@ -41,12 +41,14 @@ exports.signup = async (req, res) => {
 
         res.status(201).json({ message: 'User created successfully!', userId: newUser.id });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Signup failed. Please try again later.' });
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 };
 
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
     const { email, password } = req.body;
 
     try {
@@ -69,23 +71,27 @@ exports.login = async (req, res) => {
             email: user.email,
             isAdmin: user.isAdmin
         };
-        
+
         // Ensure session is saved before sending the response
         req.session.save((err) => {
             if (err) console.log(err);
             res.status(200).json({ message: 'Logged in successfully!', user: req.session.user });
         });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Login failed.' });
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 };
 
-exports.logout = (req, res) => {
+exports.logout = (req, res, next) => {
     req.session.destroy((err) => {
         if (err) {
-            console.log(err);
-            return res.status(500).json({ message: 'Could not log out.' });
+            if (!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
         }
         res.status(200).json({ message: 'Logged out successfully.' });
     });

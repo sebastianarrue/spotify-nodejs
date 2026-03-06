@@ -4,6 +4,7 @@ const session = require('express-session');
 const path = require('path');
 require('dotenv').config();
 const { graphqlHTTP } = require('express-graphql');
+const errorHandler = require('./middlewares/error-handler');
 
 // Import Database connections
 const sequelize = require('./config/database.sql');
@@ -61,6 +62,8 @@ app.use('/graphql', graphqlHTTP({
     rootValue: graphqlResolver,
     graphiql: true // This is the magic flag! It gives you a visual testing tool.
 }));
+
+app.use(errorHandler);
 
 // Import Sequelize Models
 const User = require('./models/User');

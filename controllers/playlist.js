@@ -2,9 +2,9 @@ const Playlist = require('../models/Playlist');
 const PlaylistSong = require('../models/PlaylistSong');
 
 // Create a new playlist
-exports.createPlaylist = async (req, res) => {
+exports.createPlaylist = async (req, res, next) => {
     const { name, description } = req.body;
-    
+
     try {
         // We get the user ID from the session!
         const userId = req.session.user.id;
@@ -17,33 +17,37 @@ exports.createPlaylist = async (req, res) => {
 
         res.status(201).json({ message: 'Playlist created!', playlist: newPlaylist });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Failed to create playlist.' });
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 };
 
 // Get all playlists for the logged-in user
-exports.getPlaylists = async (req, res) => {
+exports.getPlaylists = async (req, res, next) => {
     try {
         const userId = req.session.user.id;
-        
+
         const playlists = await Playlist.findAll({ where: { userId: userId } });
-        
+
         res.status(200).json({ playlists: playlists });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Failed to fetch playlists.' });
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 };
 
 // Add a song to a playlist (The Bridge between MySQL and MongoDB)
-exports.addSongToPlaylist = async (req, res) => {
+exports.addSongToPlaylist = async (req, res, next) => {
     const { playlistId, mongoSongId } = req.body;
 
     try {
         // First, verify the playlist belongs to the logged-in user
-        const playlist = await Playlist.findOne({ 
-            where: { id: playlistId, userId: req.session.user.id } 
+        const playlist = await Playlist.findOne({
+            where: { id: playlistId, userId: req.session.user.id }
         });
 
         if (!playlist) {
@@ -58,20 +62,22 @@ exports.addSongToPlaylist = async (req, res) => {
 
         res.status(201).json({ message: 'Song added to playlist!', addedSong });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Failed to add song.' });
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 };
 
 // Edit Playlist Information
-exports.editPlaylist = async (req, res) => {
+exports.editPlaylist = async (req, res, next) => {
     const { name, description } = req.body;
     const playlistId = req.params.id; // Get ID from the URL
 
     try {
         // Find playlist and ensure it belongs to the logged-in user
-        const playlist = await Playlist.findOne({ 
-            where: { id: playlistId, userId: req.session.user.id } 
+        const playlist = await Playlist.findOne({
+            where: { id: playlistId, userId: req.session.user.id }
         });
 
         if (!playlist) return res.status(404).json({ message: 'Playlist not found or unauthorized.' });
@@ -82,19 +88,21 @@ exports.editPlaylist = async (req, res) => {
 
         res.status(200).json({ message: 'Playlist updated!', playlist });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Failed to update playlist.' });
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 };
 
 // Remove a song from a playlist
-exports.removeSongFromPlaylist = async (req, res) => {
+exports.removeSongFromPlaylist = async (req, res, next) => {
     const { playlistId, mongoSongId } = req.body;
 
     try {
         // First, verify the playlist belongs to the user
-        const playlist = await Playlist.findOne({ 
-            where: { id: playlistId, userId: req.session.user.id } 
+        const playlist = await Playlist.findOne({
+            where: { id: playlistId, userId: req.session.user.id }
         });
 
         if (!playlist) return res.status(404).json({ message: 'Playlist not found or unauthorized.' });
@@ -106,13 +114,15 @@ exports.removeSongFromPlaylist = async (req, res) => {
 
         res.status(200).json({ message: 'Song removed from playlist.' });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Failed to remove song.' });
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 };
 
 // Delete a Playlist entirely
-exports.deletePlaylist = async (req, res) => {
+exports.deletePlaylist = async (req, res, next) => {
     const playlistId = req.params.id;
 
     try {
@@ -124,7 +134,9 @@ exports.deletePlaylist = async (req, res) => {
 
         res.status(200).json({ message: 'Playlist deleted successfully.' });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Failed to delete playlist.' });
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 };

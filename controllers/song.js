@@ -9,7 +9,7 @@ const clearImage = filePath => {
     fs.unlink(filePath, err => { if (err) console.log(err); });
 };
 
-exports.createSong = async (req, res) => {
+exports.createSong = async (req, res, next) => {
     // Multer attaches the text fields to req.body and the file to req.file
     const { title, album, author } = req.body;
     const image = req.file;
@@ -31,28 +31,30 @@ exports.createSong = async (req, res) => {
         const savedSong = await song.save(); // Save to MongoDB!
         res.status(201).json({ message: 'Song created successfully!', song: savedSong });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Failed to create song.' });
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 };
 
 // Get songs with Pagination!
-exports.getSongs = async (req, res) => {
+exports.getSongs = async (req, res, next) => {
     // Extract page from query parameters (e.g., /songs?page=2)
-    const currentPage = req.query.page || 1; 
+    const currentPage = req.query.page || 1;
     const perPage = 5; // Number of songs per page
 
     try {
         // Count total items for frontend math (total pages)
         const totalItems = await Song.find().countDocuments();
-        
+
         // Fetch the specific chunk of songs
         const songs = await Song.find()
             .skip((currentPage - 1) * perPage) // Skip items from previous pages
             .limit(perPage);                   // Limit to 'perPage' items
-        
-        res.status(200).json({ 
-            message: 'Fetched songs successfully.', 
+
+        res.status(200).json({
+            message: 'Fetched songs successfully.',
             songs: songs,
             totalItems: totalItems,
             currentPage: Number(currentPage),
@@ -60,13 +62,15 @@ exports.getSongs = async (req, res) => {
             hasPreviousPage: currentPage > 1
         });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Failed to fetch songs.' });
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 };
 
 // Edit Song
-exports.editSong = async (req, res) => {
+exports.editSong = async (req, res, next) => {
     const songId = req.params.id;
     const { title, album, author } = req.body;
     const image = req.file; // Might be undefined if they didn't upload a new one
@@ -88,13 +92,15 @@ exports.editSong = async (req, res) => {
         const updatedSong = await song.save();
         res.status(200).json({ message: 'Song updated!', song: updatedSong });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Failed to update song.' });
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 };
 
 // Delete Song
-exports.deleteSong = async (req, res) => {
+exports.deleteSong = async (req, res, next) => {
     const songId = req.params.id;
 
     try {
@@ -112,7 +118,9 @@ exports.deleteSong = async (req, res) => {
 
         res.status(200).json({ message: 'Song and all playlist references deleted.' });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Failed to delete song.' });
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 };
