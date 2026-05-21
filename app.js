@@ -22,7 +22,7 @@ app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 // 2. Manual CORS Headers (As per your course)
 app.use((req, res, next) => {
     // Allow your React frontend origin
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000'); 
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200'); 
     // Allow specific HTTP methods
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
     // Allow specific headers

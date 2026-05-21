@@ -1,5 +1,6 @@
 const Playlist = require('../models/Playlist');
 const PlaylistSong = require('../models/PlaylistSong');
+const Song = require('../models/Song');
 
 // Create a new playlist
 exports.createPlaylist = async (req, res, next) => {
@@ -32,6 +33,41 @@ exports.getPlaylists = async (req, res, next) => {
         const playlists = await Playlist.findAll({ where: { userId: userId } });
 
         res.status(200).json({ playlists: playlists });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+// Get a single playlist with its songs
+exports.getPlaylist = async (req, res, next) => {
+    const playlistId = req.params.id;
+
+    try {
+        const playlist = await Playlist.findOne({
+            where: { id: playlistId, userId: req.session.user.id }
+        });
+
+        if (!playlist) {
+            return res.status(404).json({ message: 'Playlist not found or unauthorized.' });
+        }
+
+        // Get song IDs from bridge table
+        const playlistSongs = await PlaylistSong.findAll({
+            where: { playlistId: playlistId }
+        });
+
+        const mongoSongIds = playlistSongs.map(ps => ps.mongoSongId);
+
+        // Fetch full song details from MongoDB
+        const songs = await Song.find({ _id: { $in: mongoSongIds } });
+
+        res.status(200).json({
+            playlist: playlist,
+            songs: songs
+        });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;

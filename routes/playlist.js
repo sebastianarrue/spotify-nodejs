@@ -11,6 +11,9 @@ router.post('/create', isAuth, playlistController.createPlaylist);
 // GET /playlists
 router.get('/', isAuth, playlistController.getPlaylists);
 
+// GET /playlists/:id
+router.get('/:id', isAuth, playlistController.getPlaylist);
+
 // POST /playlists/add-song
 router.post('/add-song', isAuth, playlistController.addSongToPlaylist);
 
