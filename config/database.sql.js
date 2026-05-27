@@ -9,7 +9,8 @@ const sequelize = new Sequelize(
     process.env.SQL_PASSWORD,
     {
         host: process.env.SQL_HOST,
-        dialect: 'mysql', // Specify the database engine
+        dialect: 'mysql', // Specify the database engine,
+        port: process.env.SQL_PORT,
         logging: false    // Set to console.log to see SQL queries in the terminal
     }
 );
