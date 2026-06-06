@@ -4,7 +4,7 @@
   "description": "Spotify clone back-end NodeJS app that uses xpress.js, MVC, MySQL and Sequalize, MongoDB and Mongoose, Sessions and Cookies, Authentication and Sending emails, File Uploads, pagination, Rest Apis and GraphQL",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
@@ -34,6 +34,7 @@
     "sequelize": "^6.37.7"
   },
   "devDependencies": {
+    "jest": "^30.4.2",
     "nodemon": "^3.1.14"
   }
 }
