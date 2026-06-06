@@ -1,0 +1,16 @@
+name: Trigger Parent Workspace
+
+on:
+  push:
+    branches: [ main ] # Se ejecuta al hacer push a la main del submodulo
+
+jobs:
+  ping-parent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar señal al repositorio padre
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT_TOKEN }} # El secreto que guardamos en el paso 1
+          repository: sebastianarrue/spotify-workspace # Tu repositorio principal
+          event-type: submodule-updated # Nombre del evento personalizado
