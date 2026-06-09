@@ -3,13 +3,83 @@ const authController = require('../controllers/auth');
 
 const router = express.Router();
 
-// POST /auth/signup
+/**
+ * @openapi
+ * /auth/signup:
+ *   post:
+ *     summary: Registrar un nuevo usuario
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: sebastian@pucp.pe
+ *               password:
+ *                 type: string
+ *                 example: password123
+ *     responses:
+ *       '201':
+ *         description: Usuario creado exitosamente
+ *       '400':
+ *         description: Error de validación
+ */
 router.post('/signup', authController.signup);
 
-// POST /auth/login
+/**
+ * @openapi
+ * /auth/login:
+ *   post:
+ *     summary: Iniciar sesión de usuario
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: sebastian@pucp.pe
+ *               password:
+ *                 type: string
+ *                 example: password123
+ *     responses:
+ *       '200':
+ *         description: Autenticación exitosa
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *       '401':
+ *         description: Credenciales inválidas
+ */
 router.post('/login', authController.login);
 
-// POST /auth/logout
+/**
+ * @openapi
+ * /auth/logout:
+ *   post:
+ *     summary: Cerrar sesión de usuario
+ *     tags: [Auth]
+ *     responses:
+ *       '200':
+ *         description: Sesión cerrada exitosamente
+ */
 router.post('/logout', authController.logout);
 
 module.exports = router;

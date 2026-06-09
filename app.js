@@ -1,6 +1,7 @@
 // app.js
 const express = require('express');
 const session = require('express-session');
+const { swaggerUi, specs } = require('./config/swagger');
 const path = require('path');
 require('dotenv').config();
 const { graphqlHTTP } = require('express-graphql');
@@ -67,6 +68,8 @@ app.use('/graphql', graphqlHTTP({
     rootValue: graphqlResolver,
     graphiql: true // This is the magic flag! It gives you a visual testing tool.
 }));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(errorHandler);
 
