@@ -100,7 +100,7 @@ const startServer = async () => {
         console.log('MySQL connected and models synced!');
 
         // Start listening for requests
-        app.listen(PORT, () => {
+        app.listen(PORT, '0.0.0.0', () => {
             console.log(`Server is running on port ${PORT}`);
         });
     } catch (err) {
